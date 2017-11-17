@@ -76,6 +76,8 @@ OBJECTS = \
 	bxpkg.o \
 	bxsrc.o \
 	dxpb-builder.o \
+	dxpb-certs-remote.o \
+	dxpb-certs-server.o \
 	dxpb-common.o \
 	dxpb-frontend.o \
 	dxpb-graph-to-dot.o \
@@ -107,7 +109,7 @@ main: prod
 
 all: test
 
-runnables: $(BINARIES)
+runnables: $(BINARIES) $(SUID_BINARIES)
 
 license.inc: ../COPYING
 	xxd -i $< $@
@@ -214,6 +216,8 @@ dxpb-common.c: license.inc dxpb-version.h
 
 $(BINARIES): dxpb-common.o ptrace.o
 
+$(SUID_BINARIES): dxpb-common.o bstring.o bfs.o
+
 ########################################
 #### Test Harnesses and their needs ####
 ########################################
@@ -249,7 +253,7 @@ usebgit: bgit.o bwords.o bstring.o bxsrc.o bxpkg.o
 #### Generic Targets ###
 ########################
 
-prod: $(OBJECTS) $(BINARIES)
+prod: $(OBJECTS) $(BINARIES) $(SUID_BINARIES)
 
 test: $(TEST_BINARIES) $(HARNESSES)
 
@@ -264,6 +268,7 @@ mostlyclean:
 
 clean: mostlyclean
 	rm -f $(BINARIES)
+	rm -f $(SUID_BINARIES)
 
 #############################
 #### Installation Targets ###
@@ -277,9 +282,10 @@ install-doc:
 	mkdir -p $(DESTDIR)$(DOCDIR)
 	cp -r ../doc $(DESTDIR)$(DOCDIR)
 
-install-bin: $(BINARIES)
+install-bin: $(SUID_BINARIES) $(BINARIES)
 	mkdir -p $(DESTDIR)$(BINDIR)
-	mv $(BINARIES) $(DESTDIR)$(BINDIR)
+	chmod +s $(SUID_BINARIES)
+	mv $(SUID_BINARIES) $(BINARIES) $(DESTDIR)$(BINDIR)
 
 install-runit-scripts: install-bin
 	mkdir -p $(DESTDIR)$(SVDIR)
