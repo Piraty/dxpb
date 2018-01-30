@@ -62,8 +62,9 @@ ensure_sock_if_ipc(const char *arg)
 }
 
 int
-setup_ssl(const char *argv0, const char *ssldir)
+setup_ssl(void *agent, const char *argv0, const char *ssldir)
 {
+	(void) agent;
 	(void) argv0;
 	(void) ssldir;
 	return 0;
