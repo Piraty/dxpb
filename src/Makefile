@@ -178,7 +178,7 @@ testdb: pkgimport_msg.o bxsrc.o bxbps.o bstring.o bwords.o bgraph.o bxpkg.o bdb.
 
 %_server.c: %_msg.c
 
-%_engine.inc: %.xml
+%_engine.inc: %.xml pkgall_client_ssl.xml
 
 ##################################
 #### Binaries and their needs ####
